@@ -40,7 +40,7 @@ class NamedEmbedder:
         tasks = [self.fetch_image(url) for url in urls]
         return await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def embed_images(self, urls: List[str]) -> Tuple[
+    async def __call__(self, urls: List[str]) -> Tuple[
             Dict[str, List[float]], 
             Dict[str, Exception]
         ]:
