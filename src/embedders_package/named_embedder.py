@@ -50,19 +50,29 @@ class NamedEmbedder:
             Of not succesfully loaded urls and exceptions
         """
         results = await self.fetch_images(urls)
+
+        loaded_urls, loaded_imgs, err_urls, errors = [], [], [], []
+        for url, res in zip(urls, results):
+            if isinstance(res, Image.Image):
+                loaded_urls.append(url)
+                loaded_imgs.append(res)
+            else:
+                err_urls.append(url)
+                errors.append(url)
         
-        loaded_urls, loaded_imgs = zip(*[(url, img) for url, img in zip(urls, results) if isinstance(img, Image.Image)])
-        loaded_urls, loaded_imgs = list(loaded_urls), list(loaded_imgs)
-        err_urls, errors = zip(*[(url, err) for url, err in zip(urls, results) if not isinstance(err, Image.Image)])
-        err_urls, errors = list(err_urls), list(errors)
-
-        embs = self.model(loaded_imgs)
-
-        return (
-            {
+        url2emb = {}
+        url2err = {}
+        if len(loaded_imgs) > 0:
+            embs = self.model(loaded_imgs)
+            url2emb = {
                 url: emb for url, emb in zip(loaded_urls, embs)
-            },
-            {
+            }
+        
+        if len(err_urls) > 0:
+            url2err = {
                 url: err for url, err in zip(err_urls, errors)
             }
-        )
+
+        return url2emb, url2err
+    
+    
