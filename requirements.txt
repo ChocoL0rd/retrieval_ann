@@ -11,3 +11,5 @@ jupyter
 
 httpx
 streamlit
+
+pydantic == 2.9.2

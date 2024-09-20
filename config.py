@@ -14,9 +14,12 @@ NUM_WORKERS = 4
 # data configs
 FORMATTED_DATA_NAME = "tmp"
 COLLECTION_NAME = "tmp"
-ANNOTATED_DATA_NAME = ""
+ANNOTATED_DATA_NAME = "tmp"
 
 COLLECTION_METRIC = "cosine"  # l2, ip (inner product), cosine
+
+# annotation configs
+ANN_META_FIELDS = ["url"]
 
 
 # default paths
