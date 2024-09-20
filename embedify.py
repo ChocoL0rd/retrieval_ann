@@ -12,7 +12,7 @@ import config
 from src.embedders_package import NamedEmbedder
 from src.embeddify_utils import deduplicate_data, CustomCollate
 
-log_dir = os.path.join("logs", "annotate")
+log_dir = os.path.join("logs", "embeddify")
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
@@ -78,15 +78,12 @@ async def main():
 
     for ids, urls, metas in tqdm(loader):
         url2emb, url2err = await embedder(urls)
-        # :TODO : fix for the case when some of the dicts is empty
-        embs, ids_of_embs, metas_of_embs = zip(
-            *[(url2emb[url], id, meta) for id, url, meta in zip(ids, urls, metas) if url in url2emb]
-        )
-        collection.add(
-            ids=ids_of_embs,
-            embeddings=embs,
-            metadatas=metas_of_embs
-        )
+        if len(url2emb) > 0:
+            collection.add(
+                ids=[id for id, url in zip(ids, urls) if url in url2emb],
+                embeddings=[url2emb[url] for url in urls],
+                metadatas=[meta for meta, url in zip(metas, urls) if url in url2emb]
+            )
 
         for url, error in url2err.items():
             logger.error(f"Error for URL {url}: {error}")
