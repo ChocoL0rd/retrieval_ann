@@ -11,62 +11,72 @@ import config
 from src.annotator_utils import AnnRandomSampler, URLMetaPair
 
 
-log_dir = os.path.join("logs", "annotate")
-if not os.path.exists(log_dir):
-    os.makedirs(log_dir)
+if "initialized" not in st.session_state:
+    log_dir = os.path.join("logs", "annotate")
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
 
-log_filename = datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
-log_filepath = os.path.join(log_dir, log_filename)
+    log_filename = datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
+    log_filepath = os.path.join(log_dir, log_filename)
 
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=[
-        logging.FileHandler(log_filepath),
-        logging.StreamHandler()
-    ]
-)
+    logging.basicConfig(
+        level=logging.DEBUG,
+        handlers=[
+            logging.FileHandler(log_filepath),
+            logging.StreamHandler()
+        ]
+    )
+    logging.getLogger('watchdog.observers.inotify_buffer').setLevel(logging.WARNING)
+    logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
-
-logger.info(f"COLLECTION_NAME: {config.COLLECTION_NAME}")
-logger.info(f"ANNOTATED_DATA_NAME: {config.ANNOTATED_DATA_NAME}")
-
-
-# read annotated data if exists
-annotated_ids = set()
-if os.path.exists(config.ANNOTATED_DATA_PATH):
-    with open(config.ANNOTATED_DATA_PATH) as f:
-        annotated_data = json.load(f)
-        annotated_ids = {pos for ann in annotated_data for pos in ann["pos"]}
-else:
-    with open(config.ANNOTATED_DATA_PATH, "w") as f:
-        json.dump(
-            [],
-            f,
-            indent=4
-        )
-     
-
-logger.info(f"Number of annotated ids: {len(annotated_ids)}")
+    logger.info(f"COLLECTION_NAME: {config.COLLECTION_NAME}")
+    logger.info(f"ANNOTATED_DATA_NAME: {config.ANNOTATED_DATA_NAME}")
 
 
-# read collection
-db = chromadb.PersistentClient(
-    path=config.CHROMADB_PATH
-)
+    # read annotated data if exists
+    annotated_ids = set()
+    if os.path.exists(config.ANNOTATED_DATA_PATH):
+        with open(config.ANNOTATED_DATA_PATH) as f:
+            annotated_data = json.load(f)
+            annotated_ids = {pos for ann in annotated_data for pos in ann["pos"]}
+    else:
+        with open(config.ANNOTATED_DATA_PATH, "w") as f:
+            json.dump(
+                [],
+                f,
+                indent=4
+            )
+        
 
-collection = db.get_collection(
-    name=config.COLLECTION_NAME,
-)
-logger.info(f"Number of elements in collection: {collection.count()}")
+    logger.info(f"Number of annotated ids: {len(annotated_ids)}")
+
+
+    # read collection
+    db = chromadb.PersistentClient(
+        path=config.CHROMADB_PATH
+    )
+
+    collection = db.get_collection(
+        name=config.COLLECTION_NAME,
+    )
+    logger.info(f"Number of elements in collection: {collection.count()}")
+
+    sampler = AnnRandomSampler(collection=collection, meta_fields=config.ANN_META_FIELDS)
+    sampler.exclude_ids(annotated_ids)
+
+    # Store variables in session_state to persist across runs
+    st.session_state["annotated_data"] = annotated_data
+    st.session_state["annotated_ids"] = annotated_ids
+    st.session_state["collection"] = collection
+    st.session_state["sampler"] = AnnRandomSampler(collection=collection, meta_fields=config.ANN_META_FIELDS)
+    st.session_state["sampler"].exclude_ids(annotated_ids)
+    st.session_state["initialized"] = True
+
 
 n_nearest = st.slider("Number of nearest elements", 1, 20, 5)
-sampler = AnnRandomSampler(collection=collection, meta_fields=config.ANN_META_FIELDS)
-sampler.exclude_ids(annotated_ids)
-
 
 if st.button("Sample"):
-    sample_res = sampler(n_nearest)
+    sample_res = st.session_state["sampler"](n_nearest)
     if sample_res is None:
         st.write("No items remaining")
     else:
@@ -87,7 +97,7 @@ if st.button("Sample"):
         if st.button("Save and Proceed"):
             pos = [id for id, value in id2pos_neg.items() if value]
             neg = [id for id, value in id2pos_neg.items() if not value]
-            annotated_data.append(
+            st.session_state["annotated_data"].append(
                 {
                     "pos": pos,
                     "neg": neg
@@ -95,10 +105,10 @@ if st.button("Sample"):
             )
             with open(config.ANNOTATED_DATA_PATH, "w") as f:
                 json.dump(
-                    annotated_data,
+                    st.session_state["annotated_data"],
                     f,
                     indent=4
                 )
         
-            sampler.exclude_ids(pos)
+            st.session_state["sampler"].exclude_ids(pos)
 
