@@ -74,22 +74,16 @@ if st.button("Sample"):
         id2pos_neg = {item.id: False for item in nearest_items}
 
         st.subheader("Main Element")
-        st.image(main_item.url, caption="Random Element Photo")
-        st.write(f"Metadata: \n{json.dumps(main_item.metadata, indent=4)}")
+        st.image(main_item.url, caption=main_item.id)
+        st.write(f"Metadata:", main_item.metadata)
 
         st.subheader(f"Top {n_nearest} Nearest Elements")
-        for i, item in enumerate(nearest_items):
-            col1, col2, col3 = st.columns([1, 2, 3])
-            
-            with col1:
-                id2pos_neg[nearest_items[i].id] = st.checkbox(f"Element {i}")
-                    
-            with col2:
-                st.image(item.url, caption=f"Element {i} Photo")
-            
-            with col3:
-                st.write("Metadata:", item.metadata)
+        for i, item in enumerate(nearest_items):            
+            id2pos_neg[nearest_items[i].id] = st.checkbox(f"Element {i}")
+            st.image(item.url, caption=nearest_items[i].id)
+            st.write("Metadata:", item.metadata)
 
+        
         if st.button("Save and Proceed"):
             pos = [id for id, value in id2pos_neg.items() if value]
             neg = [id for id, value in id2pos_neg.items() if not value]
