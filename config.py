@@ -20,8 +20,13 @@ COLLECTION_METRIC = "cosine"  # l2, ip (inner product), cosine
 
 # annotation configs
 ANN_META_FIELDS = ["url"]
-ANN_SAMPLER_NAME = "rand"
-ANN_SAMPLER_CFG = {}
+# ANN_SAMPLER_NAME = "rand"
+# ANN_SAMPLER_CFG = {}
+
+ANN_SAMPLER_NAME = "meta_weighted_rand"
+ANN_SAMPLER_CFG = {
+    "meta_fields": "url"
+}
 
 
 # default paths

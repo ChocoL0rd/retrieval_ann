@@ -5,7 +5,8 @@ from .samplers import *
 import logging
 
 name2sampler_class = {
-    "rand": AnnRandomSampler
+    "rand": AnnRandomSampler,
+    "meta_weighted_rand": AnnMetaWeightedRandomSampler
 }
 
 
