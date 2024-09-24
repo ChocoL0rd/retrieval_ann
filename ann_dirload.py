@@ -26,8 +26,6 @@ logger = logging.getLogger(__name__)
 logger.info(f"ANNOTATED_DATA_PATH: {config.ANNOTATED_DATA_PATH}")
 logger.info(f"ANN_DIRRIFY_DIR_PATH: {config.ANN_DIRRIFY_DIR_PATH}")
 
-os.makedirs(config.ANN_DIRRIFY_DIR_PATH, exist_ok=False)
-
 # read annotated data if exists
 annotated_ids = set()
 if os.path.exists(config.ANNOTATED_DATA_PATH):
