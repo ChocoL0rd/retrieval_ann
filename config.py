@@ -28,6 +28,9 @@ ANN_SAMPLER_CFG = {
     "meta_fields": "url"
 }
 
+ANN_DIRRIFY_DIR_PATH = os.path.join("data", "dirrify", "tmp")
+ANN_DIRRIFY_NDIRS = 1000
+ANN_DIRRIFY_NNEAREST = 20
 
 # default paths
 FORMATTED_DIR = "data/formatted"

@@ -3,12 +3,14 @@ torchvision == 0.16.1
 transformers
 
 numpy == 1.26.2
+scikit-learn == 1.5.2
 
 chromadb
 
 tqdm
 jupyter
 
+aiohttp
 httpx
 streamlit
 
