@@ -26,7 +26,8 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 logger.info(f"FORMATTED_DATA_NAME: {config.FORMATTED_DATA_NAME}")

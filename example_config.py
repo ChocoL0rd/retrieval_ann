@@ -11,11 +11,10 @@ PIN_MEMORY = True
 NUM_WORKERS = 4
 
 
-CUSTOM_NAME = "vipavenue_fclip"
 # data configs
-FORMATTED_DATA_NAME = "vipavenue"
-COLLECTION_NAME = CUSTOM_NAME
-ANNOTATED_DATA_NAME = CUSTOM_NAME
+FORMATTED_DATA_NAME = "tmp"
+COLLECTION_NAME = "tmp"
+ANNOTATED_DATA_NAME = "tmp"
 
 COLLECTION_METRIC = "cosine"  # l2, ip (inner product), cosine
 
@@ -29,7 +28,7 @@ ANN_SAMPLER_CFG = {
     "meta_fields": "url"
 }
 
-ANN_DIRRIFY_DIR_PATH = os.path.join("data", "dirrify", CUSTOM_NAME)
+ANN_DIRRIFY_DIR_PATH = os.path.join("data", "dirrify", "tmp")
 ANN_DIRRIFY_NDIRS = 1000
 ANN_DIRRIFY_NNEAREST = 20
 
