@@ -80,9 +80,10 @@ async def main():
     for ids, urls, metas in tqdm(loader):
         url2emb, url2err = await embedder(urls)
         if len(url2emb) > 0:
+
             collection.add(
                 ids=[id for id, url in zip(ids, urls) if url in url2emb],
-                embeddings=[url2emb[url] for url in urls],
+                embeddings=[url2emb[url] for url in urls if url in url2emb],
                 metadatas=[meta for meta, url in zip(metas, urls) if url in url2emb]
             )
 
