@@ -58,7 +58,7 @@ class NamedEmbedder:
                 loaded_imgs.append(res)
             else:
                 err_urls.append(url)
-                errors.append(url)
+                errors.append(res)
         
         url2emb = {}
         url2err = {}
