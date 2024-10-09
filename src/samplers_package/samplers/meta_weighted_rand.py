@@ -46,8 +46,8 @@ class AnnMetaWeightedRandomSampler(BaseAnnSampler):
         self.unique_meta_values, self.meta_values_counts = np.unique(self.meta_values, return_counts=True, axis=0)
 
         # Create probabilities for each category (1 / count) and normalize them
-        self.meta_probabilities = 1.0 / self.meta_values_counts
-        self.meta_probabilities /= self.meta_probabilities.sum()
+        # self.meta_probabilities = 1.0 / self.meta_values_counts
+        # self.meta_probabilities /= self.meta_probabilities.sum()
 
     def exclude_ids(self, ids: List[str]):
         """
@@ -68,7 +68,10 @@ class AnnMetaWeightedRandomSampler(BaseAnnSampler):
             return None
 
         # Step 1: Randomly choose a category based on probabilities
-        chosen_meta_value = self.unique_meta_values[np.random.choice(len(self.unique_meta_values), p=self.meta_probabilities)]
+        chosen_meta_value = self.unique_meta_values[np.random.choice(
+            len(self.unique_meta_values), 
+            # p=self.meta_probabilities
+        )]
 
         # Step 2: Find all ids in the selected category (using NumPy to filter)
         mask = np.all(self.meta_values == chosen_meta_value, axis=1)
