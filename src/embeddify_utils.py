@@ -4,12 +4,15 @@ import uuid
 
 
 class CustomCollate:
-    def __init__(self):
-        pass        
+    def __init__(self, id_field=None):
+        self.id_field = id_field
 
     def __call__(self, batch: List[dict]) -> Tuple[List[str], List[str], List[dict]]:
         """ Returns list of ids(uuid), urls and list of metadata excluding those that are not in collection """
-        return [str(uuid.uuid4()) for _ in batch], [item["url"] for item in batch], batch
+        if self.id_field is None:
+            return [str(uuid.uuid4()) for _ in batch], [item["url"] for item in batch], batch
+        else:
+            return [item[self.id_field] for item in batch], [item["url"] for item in batch], batch
 
 
 def deduplicate_data(metadatas: List[dict], logger) -> List[dict]:

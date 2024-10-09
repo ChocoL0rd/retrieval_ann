@@ -67,7 +67,7 @@ async def main():
         drop_last=False,
         pin_memory=config.PIN_MEMORY,
         num_workers=config.NUM_WORKERS,
-        collate_fn=CustomCollate()
+        collate_fn=CustomCollate(config.CUSTOM_ID_FIELD)
     )
 
     # load model

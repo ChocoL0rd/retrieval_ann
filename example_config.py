@@ -10,7 +10,7 @@ BATCH_SIZE = 256
 PIN_MEMORY = True
 NUM_WORKERS = 4
 
-
+CUSTOM_ID_FIELD = "custom_id"
 # data configs
 FORMATTED_DATA_NAME = "tmp"
 COLLECTION_NAME = "tmp"
