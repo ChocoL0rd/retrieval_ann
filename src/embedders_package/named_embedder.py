@@ -7,7 +7,8 @@ from io import BytesIO
 from .embedders import *
 
 name2model_class: Dict[str, Callable[..., BaseImgEmbedder]] = {
-    "clip": CLIPEmbedder
+    "clip": CLIPEmbedder,
+    "dinov2": DinoV2Embedder
 }
 
 
